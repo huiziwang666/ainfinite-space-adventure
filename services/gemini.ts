@@ -1,8 +1,16 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { MissionDebrief } from "../types";
 
-const apiKey = (import.meta.env.VITE_GEMINI_API_KEY || process.env.API_KEY || process.env.GEMINI_API_KEY) as string;
-const ai = new GoogleGenAI({ apiKey });
+const apiKey = (import.meta.env.VITE_GEMINI_API_KEY || process.env.API_KEY || process.env.GEMINI_API_KEY || '') as string;
+// Lazy initialization to avoid errors if API key is missing
+let ai: GoogleGenAI | null = null;
+
+const getAI = () => {
+  if (!ai && apiKey) {
+    ai = new GoogleGenAI({ apiKey });
+  }
+  return ai;
+};
 
 const debriefSchema: Schema = {
   type: Type.OBJECT,
@@ -23,7 +31,16 @@ export const generateMissionDebrief = async (score: number): Promise<MissionDebr
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const aiInstance = getAI();
+    if (!aiInstance || !apiKey) {
+      // Return fallback if API key is not configured
+      return { 
+        message: "Mission Complete!", 
+        fact: "Did you know asteroids are leftover rocks from when planets formed?" 
+      };
+    }
+
+    const response = await aiInstance.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
