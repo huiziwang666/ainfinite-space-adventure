@@ -38,7 +38,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({ gameState, onStart, on
 
         {/* Lives */}
         <div className="flex gap-1">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3, 4, 5].map((i) => (
              <div key={i} className={`transition-all duration-500 ${i <= gameState.lives ? 'scale-100 opacity-100' : 'scale-50 opacity-20'}`}>
                 <Heart 
                   className={`w-8 h-8 ${i <= gameState.lives ? 'fill-red-500 text-red-500' : 'text-slate-600'}`} 
@@ -58,7 +58,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({ gameState, onStart, on
         <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-fade-in-up border-4 border-indigo-100">
           <div className="w-24 h-24 bg-indigo-100 rounded-full mx-auto mb-6 flex items-center justify-center relative">
              <div className="text-6xl z-10">🧑‍🚀</div>
-             <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white">3 Lives!</div>
+             <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white">5 Lives!</div>
           </div>
           <h2 className="text-3xl font-black text-slate-800 mb-2">Ready, Cadet?</h2>
           <p className="text-slate-500 mb-8 text-lg">
@@ -101,7 +101,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({ gameState, onStart, on
           ) : null}
 
           <Button onClick={onRestart} className="w-full text-lg shadow-xl shadow-indigo-200" variant="accent">
-            Try Again (3 Lives)
+            Try Again (5 Lives)
           </Button>
         </div>
       </div>

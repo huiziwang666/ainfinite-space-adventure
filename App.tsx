@@ -11,7 +11,7 @@ export default function App() {
     isGameOver: false,
     score: 0,
     highScore: 0,
-    lives: 3
+    lives: 5
   });
 
   // Use a ref queue for input to handle rapid taps correctly in the game loop
@@ -52,7 +52,7 @@ export default function App() {
       isGameOver: false,
       score: 0,
       highScore: gameState.highScore,
-      lives: 3
+      lives: 5
     });
   };
 

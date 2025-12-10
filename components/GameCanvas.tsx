@@ -59,6 +59,9 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   const frameCountRef = useRef(0);
   const scoreRef = useRef(0);
   const difficultyRef = useRef(1);
+  const lastSpawnFrameRef = useRef(0);
+  const wasPlayingRef = useRef(false);
+  const wasGameOverRef = useRef(false);
 
   // --- AUDIO SYSTEM ---
   const initAudio = useCallback(() => {
@@ -202,6 +205,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     scoreRef.current = 0;
     frameCountRef.current = 0;
     difficultyRef.current = 1;
+    lastSpawnFrameRef.current = 0;
     playerRef.current.isHit = false;
     playerRef.current.hitTimer = 0;
 
@@ -211,6 +215,31 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
        window.removeEventListener('touchstart', handleInteract);
     }
   }, [gameState.isPlaying, initAudio]);
+
+  // Reset score when game starts or restarts
+  useEffect(() => {
+    // Detect restart: transitioning from game over (isGameOver: true) to playing (isGameOver: false)
+    const isRestarting = wasGameOverRef.current && !gameState.isGameOver && gameState.isPlaying;
+    // Detect new game: transitioning from not playing to playing
+    const isNewGame = !wasPlayingRef.current && gameState.isPlaying && !gameState.isGameOver;
+    
+    if (isRestarting || isNewGame) {
+      // Game just started/restarted - reset score to 0
+      setScore(0);
+      scoreRef.current = 0; // Also reset internal score ref
+      wasPlayingRef.current = true;
+    }
+    
+    // Track game over state
+    wasGameOverRef.current = gameState.isGameOver;
+    
+    // Track playing state
+    if (gameState.isPlaying && !gameState.isGameOver) {
+      wasPlayingRef.current = true;
+    } else if (!gameState.isPlaying) {
+      wasPlayingRef.current = false;
+    }
+  }, [gameState.isPlaying, gameState.isGameOver, setScore]);
 
   // --- UPDATE LOOP ---
   const update = useCallback(() => {
@@ -262,19 +291,21 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     }
 
     // Spawn Rocks
-    const baseSpawnRate = 45;
-    const spawnRate = Math.max(15, Math.floor(baseSpawnRate / difficultyRef.current)); 
+    const baseSpawnRate = 90;
+    const spawnRate = Math.max(30, Math.floor(baseSpawnRate / difficultyRef.current)); 
     
-    if (frameCountRef.current % spawnRate === 0) {
+    // Spawn rocks based on frame difference to ensure consistent spawning
+    if (frameCountRef.current - lastSpawnFrameRef.current >= spawnRate) {
       const lane = Math.floor(Math.random() * LANES);
       rocksRef.current.push({
         id: Date.now() + Math.random(),
         lane: lane,
         y: -100, // Start above screen
-        speed: (Math.random() * 3 + 4) * difficultyRef.current,
+        speed: (Math.random() * 2 + 2) * difficultyRef.current,
         rotation: Math.random() * Math.PI,
         type: Math.random() > 0.8 ? 'crystal' : Math.random() > 0.6 ? 'jagged' : 'round'
       });
+      lastSpawnFrameRef.current = frameCountRef.current;
     }
 
     // Update Rocks
