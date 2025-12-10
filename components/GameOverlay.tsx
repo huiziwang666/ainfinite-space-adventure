@@ -60,7 +60,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({ gameState, onStart, on
              <div className="text-6xl z-10">🧑‍🚀</div>
              <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white">5 Lives!</div>
           </div>
-          <h2 className="text-3xl font-black text-slate-800 mb-2">Ready, Cadet?</h2>
+          <h2 className="text-3xl font-black text-slate-800 mb-2">Ready, Pilot?</h2>
           <p className="text-slate-500 mb-8 text-lg">
             Tap <span className="font-bold text-indigo-600">Left</span> or <span className="font-bold text-indigo-600">Right</span> to switch lanes and dodge rocks!
           </p>
