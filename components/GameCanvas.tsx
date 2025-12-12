@@ -290,9 +290,9 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       difficultyRef.current = 1 + (scoreRef.current / 4000); 
     }
 
-    // Spawn Rocks
-    const baseSpawnRate = 90;
-    const spawnRate = Math.max(30, Math.floor(baseSpawnRate / difficultyRef.current)); 
+    // Spawn Rocks - faster speed = more rocks (lower spawn rate)
+    const baseSpawnRate = 120 - (gameState.speed * 15); // Speed 1: 105, Speed 5: 45
+    const spawnRate = Math.max(20, Math.floor(baseSpawnRate / difficultyRef.current)); 
     
     // Spawn rocks based on frame difference to ensure consistent spawning
     if (frameCountRef.current - lastSpawnFrameRef.current >= spawnRate) {
@@ -301,7 +301,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
         id: Date.now() + Math.random(),
         lane: lane,
         y: -100, // Start above screen
-        speed: (Math.random() * 2 + 2) * difficultyRef.current,
+        speed: (Math.random() * 2 + (gameState.speed + 1)) * difficultyRef.current,
         rotation: Math.random() * Math.PI,
         type: Math.random() > 0.8 ? 'crystal' : Math.random() > 0.6 ? 'jagged' : 'round'
       });

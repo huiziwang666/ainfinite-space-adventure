@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { GameCanvas } from './components/GameCanvas';
 import { GameOverlay } from './components/GameOverlay';
-import { GameState } from './types';
+import { GameState, SpeedSetting } from './types';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 export default function App() {
@@ -11,7 +11,8 @@ export default function App() {
     isGameOver: false,
     score: 0,
     highScore: 0,
-    lives: 5
+    lives: 5,
+    speed: 3
   });
 
   // Use a ref queue for input to handle rapid taps correctly in the game loop
@@ -44,7 +45,7 @@ export default function App() {
      if (gameState.isPlaying && !gameState.isGameOver) inputQueue.current.push('right');
   };
 
-  const startGame = () => {
+  const startGame = (speed: SpeedSetting) => {
     // Reset queue
     inputQueue.current = [];
     setGameState({
@@ -52,7 +53,8 @@ export default function App() {
       isGameOver: false,
       score: 0,
       highScore: gameState.highScore,
-      lives: 5
+      lives: 5,
+      speed
     });
   };
 
@@ -72,6 +74,10 @@ export default function App() {
     setGameState(prev => ({ ...prev, lives }));
   };
 
+  const changeSpeed = (speed: SpeedSetting) => {
+    setGameState(prev => ({ ...prev, speed }));
+  };
+
   return (
     <div className="relative w-full h-screen overflow-hidden bg-slate-900 space-bg select-none">
       <Header />
@@ -84,10 +90,11 @@ export default function App() {
         inputQueue={inputQueue}
       />
       
-      <GameOverlay 
-        gameState={gameState} 
-        onStart={startGame} 
+      <GameOverlay
+        gameState={gameState}
+        onStart={startGame}
         onRestart={startGame}
+        onSpeedChange={changeSpeed}
       />
 
       {/* Mobile Touch Controls - Large Hit Areas */}

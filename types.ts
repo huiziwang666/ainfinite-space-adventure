@@ -1,9 +1,12 @@
+export type SpeedSetting = 1 | 2 | 3 | 4 | 5;
+
 export interface GameState {
   isPlaying: boolean;
   isGameOver: boolean;
   score: number;
   highScore: number;
   lives: number;
+  speed: SpeedSetting;
 }
 
 export interface Player {
